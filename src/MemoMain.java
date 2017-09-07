@@ -142,7 +142,7 @@ class Model{
 	}
 	
 	public Memo read(int no) {
-		
+		// no에 맞는 memo 찾기
 		for(Memo memo : list) {
 			if(memo.no == no) {
 				
@@ -154,8 +154,10 @@ class Model{
 	
 	public boolean update(int no, Memo memoTemp) {		
 		boolean check=false;
+		//글번호를 받아 특정 memo Search
 		for(Memo memo : list) {
 			if(memo.no == no) {
+				//특정 memo에 글 하나를 저장한 메모리를 덮어씌워 수정
 				memo.name = memoTemp.name;
 				memo.content = memoTemp.content;
 				check=true;
@@ -167,8 +169,10 @@ class Model{
 	
 	public boolean delete(int no) {
 		boolean check = false;
+		//글번호를 받아 특정 memo Search
 		for(Memo memo : list) {
 			if(memo.no == no) {
+				//발견한 특정 memo 삭제
 				list.remove(memo); // ArrayList의 아이템을 삭제하기 위해서 객체를 직접 전달
 				check = true;
 				break;
@@ -178,7 +182,7 @@ class Model{
 	}
 	
 	public ArrayList<Memo> showList() {
-		
+		//저장되어 있는 모든 Memo 반환
 		return list; 
 		
 	}
@@ -204,6 +208,7 @@ class View{
 		}
 		
 		public void read(Memo memo) {
+			// 입력받은 메모에 저장된 값 출력
 			println("No: "+memo.no);
 			println("Author: "+memo.name);
 			println("Content: "+memo.content);
@@ -213,11 +218,11 @@ class View{
 			String formattedDate = sdf.format(memo.datetime);
 			println(formattedDate);		
 		}
-		
+		//새로운 메모리 저장
 		public Memo update(Memo memo, Scanner scanner) {
 			
 			Memo memoTemp = new Memo();
-
+			// 업데이트 할 글을 새로운 메모리에 저장
 			println("이름을 입력해주세요: ");
 			memo.name = scanner.nextLine();
 			println("내용을 입력해주세요: ");
@@ -226,6 +231,7 @@ class View{
 
 			return memoTemp;
 		}
+		//update여부 체크
 		public void update(boolean check) {
 			if(check==true) {
 				println("메모가 성공적으로 수정되었습니다");
@@ -234,6 +240,7 @@ class View{
 			}
 		}
 		
+		//delete 여부 체크
 		public void delete(boolean check) {
 			if(check==true) {
 				println("메모가 성공적으로 삭제되었습니다");
@@ -259,13 +266,14 @@ class View{
 			System.out.println(string);
 		}
 		
+		// 글번호를 입력받아 리턴
 		public String findNo(Scanner scanner){
-			
 			println("글 번호를 입력하세요");
 			String tempNo = scanner.nextLine();
 			return tempNo;		
 		}
 		
+		// 특정 번호에 맞게 메시지 전달
 		public void message(int num) {
 			if(num==0) {
 				println("입력한 글 번호가 존재하지 않습니다");
