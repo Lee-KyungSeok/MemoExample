@@ -127,8 +127,8 @@ public class MemoMain {
 // 데이터를 저장하는 저장소를 관리하는 객체
 class Model{
 	
-	// 전체 메모를 저정하는 저장소 여
-	// 러개의 객체를 저장하는 list가 된다.
+	// 전체 메모를 저정하는 저장소
+	// 여러개의 객체를 저장하는 list가 된다.
 	ArrayList<Memo> list = new ArrayList<>();
 	
 	//마지막 글번호 저장
