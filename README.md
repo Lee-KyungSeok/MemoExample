@@ -10,7 +10,7 @@ Memo를 Model, View, Controller 로 구분하여 개발
 5. Memo 리스트 조회
 
 ## __설명__
-### ● ex> Memo 생성
+### ● ex> Memo 생성의 경우
 1. View에서 사용자를 통해 Memo를 입력받고 Controller에게 넘김
 2. Controller는 Model에게 저장 명령
 3. Model은 입력받은 Memo를 저장</br>
@@ -246,7 +246,154 @@ public void message(int num) {
 
 ### ● Controller 설명
 
-####__전체 소스 코드__
-``` java
+#### 0. 명령어 입력
+```java
+while(!command.equals("exit")) {
 
+  // 명령어를 입력받아서 후속처리
+  // c - create : 데이터 입력모드로 전환
+  // r - read : 데이터 읽기모드로 전환
+  // u - update : 데이터 수정모드로 전환
+  // d - delete : 데이터 삭제모드로 전환
+  main.view.println("------------명령어를 입력하세요-------------");
+  main.view.println("c : 쓰기, r : 읽기, u : 수정, d : 삭제, l : 목록");
+  main.view.println("exit : 종료");
+  main.view.println("--------------------------------------");
+  command = scanner.nextLine();
+        /* 코드 생략 */
+}
 ```
+#### 1. create
+* View에서 입력받은 Memo를 Model로 넘겨 저장소에 저장
+```java
+switch(command) {
+case "c":
+  Memo cMemo = main.view.create(scanner);
+  main.model.create(cMemo);
+  break;
+/* 코드 생략 */
+}
+```
+
+#### 2. read
+* View에서 번호를 입력받아 이것이 int형인지 확인
+* int형이 아니라면 오류처리
+* 입력받은 번호를 통해 Model로 부터 데이터 수신 요청
+* 데이터가 존재하지 않는다면 찾을 수 없다는 메시지 View에 출력 요청
+* 데이터가 존재한다면 받은 데이터 View에 출력 요청
+```java
+switch(command) {
+/* 코드 생략 */
+case "r":
+  String rTempNo = main.view.findNo(scanner);
+  // ------ 숫자가 입력되지 않았을 때의 예외 처리 ------//
+  try {
+    int no = Integer.parseInt(rTempNo);
+    //Model에서 no를 받아 데이터를 불러온다.
+    Memo rMemo = main.model.read(no);
+
+    //no가 없는 경우 메세지를 보여준다.
+    if(rMemo == null) {
+      main.view.message(0);
+    } else {
+      // 데이터 memo를 화면에 보여준다.
+      main.view.read(rMemo);
+    }
+  } catch(NumberFormatException e) {
+    main.view.message(1);
+  }				
+  break;
+/* 코드 생략 */
+}
+```
+
+#### 3. update
+* View에서 번호를 입력받아 이것이 int형인지 확인
+* int형이 아니라면 오류처리
+* 입력받은 번호를 통해 Model로 부터 데이터 수신 요청
+* 데이터가 존재하지 않는다면 찾을 수 없다는 메시지 View에 출력 요청
+* 데이터가 존재한다면 받은 데이터에 대한 수정사항  View에 입력 요청
+* 수정된 Memo를 Model에 전달하여 저장된 내용 수정 요청
+* 수정 완료 여부 메시지 View에 출력 요청
+```java
+switch(command) {
+/* 코드 생략 */
+case "u":
+  String uTempNo = main.view.findNo(scanner);
+  // ------ 숫자가 입력되지 않았을 때의 예외 처리 ------//
+  try {
+    int no = Integer.parseInt(uTempNo);
+    //Model에서 no를 받아 데이터를 불러온다.
+    Memo uMemo = main.model.read(no);
+
+    //no가 없는 경우 메세지를 보여준다.
+    if(uMemo ==null) {
+      main.view.message(0);
+    } else {
+      // 데이터의 수정사항을 받는다.
+      uMemo = main.view.update(uMemo,scanner);
+      // 수정사항을 Model에 전달하고 수정 완료여부를 받아온다.
+      boolean updateCheck = main.model.update(no, uMemo);
+      // 수정이 완료여부를 사용자에게 알린다.
+      main.view.update(updateCheck);
+    }
+  } catch(NumberFormatException e) {
+    main.view.message(1);
+  }		
+  break;
+/* 코드 생략 */
+}
+```
+
+#### 4. delete
+* View에서 번호를 입력받아 이것이 int형인지 확인
+* int형이 아니라면 오류처리
+* 입력받은 번호를 통해 Model로 부터 데이터 수신 요청
+* 데이터가 존재하지 않는다면 찾을 수 없다는 메시지 View에 출력 요청
+* 데이터가 존재한다면 Model에게 데이터에 대한 삭제 요청
+* 삭제 완료 여부 메시지 View에 출력 요청
+```java
+switch(command) {
+/* 코드 생략 */
+case "d":
+  String dTempNo = main.view.findNo(scanner);
+  // ------ 숫자가 입력되지 않았을 때의 예외 처리 ------//
+  try {
+    int no = Integer.parseInt(dTempNo);
+    //Model에서 no를 받아 데이터를 불러온다.
+    Memo dMemo = main.model.read(no);
+
+    //no가 없는 경우 메세지를 보여준다.
+    if(dMemo ==null) {
+      main.view.message(0);
+    } else {
+      // 데이터 memo를 삭제하고 완료 여부를 알린다.
+      boolean deleteCheck = main.model.delete(no);
+      // 데이터 삭제여부를 사용자에게 알린다.
+      main.view.delete(deleteCheck);
+    }
+  } catch(NumberFormatException e) {
+    main.view.message(1);
+  }
+  break;
+/* 코드 생략 */
+}
+```
+
+#### 5. showList
+* 전체 Memo 데이터를 Model로부터 추출
+* 모든 데이터 View에 출력 요청
+```java
+switch(command) {
+/* 코드 생략 */
+case "l":
+  //전체 데이터를 Model로 부터 받아온다.
+  ArrayList<Memo> memoList = main.model.showList();
+  //받아온 데이터를 View에 보여준다.
+  main.view.showList(memoList);
+  break;
+}
+```
+
+## __전체 소스 코드 링크__
+### [코드 보기](https://github.com/Lee-KyungSeok/MemoExample/blob/master/src/MemoMain.java)
